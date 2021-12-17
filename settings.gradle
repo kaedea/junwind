@@ -7,5 +7,5 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "JUnwind"
-// include ':app'
+include ':app'
 include ':junwind'
