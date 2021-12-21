@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="20dp"
@@ -16,5 +17,31 @@
         android:layout_height="wrap_content"
         android:onClick="onGetOtherTid"
         android:text="Get Other TID Stack" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:background="#5000">
+
+                <TextView
+                    android:id="@+id/tv_dump"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scrollHorizontally="false"
+                    android:singleLine="false"
+                    android:textSize="12sp"
+                    android:visibility="visible" />
+            </HorizontalScrollView>
+        </LinearLayout>
+    </ScrollView>
 
 </LinearLayout>
