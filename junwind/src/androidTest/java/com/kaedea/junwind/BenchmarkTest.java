@@ -12,11 +12,12 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import io.hexhacking.xunwind.XUnwind;
 
 @RunWith(AndroidJUnit4.class)
 public class BenchmarkTest extends AbsAndroidTest {
 
-    public static final int COUNT = 10000;
+    public static final int COUNT = 1000;
 
     @Test
     public void testGetThreadStackByThrowable() {
@@ -59,6 +60,25 @@ public class BenchmarkTest extends AbsAndroidTest {
         long bgnMillis = SystemClock.uptimeMillis();
         for (int i = 0; i < COUNT; i++) {
             String stack = JUnwind.jUnwind(tid.get());
+            Assert.assertFalse(TextUtils.isEmpty(stack));
+        }
+        Assert.fail("Time Consumed: " + (SystemClock.uptimeMillis() - bgnMillis));
+    }
+
+    @Test
+    public void getGetThreadStackByCFI() {
+        XUnwind.init();
+        final AtomicInteger tid = new AtomicInteger(0);
+        new Thread(() -> {
+            tid.set(Process.myTid());
+            while (true) {}
+        }).start();
+
+        while (tid.get() == 0) {}
+
+        long bgnMillis = SystemClock.uptimeMillis();
+        for (int i = 0; i < COUNT; i++) {
+            String stack = XUnwind.getLocalThread(tid.get());
             Assert.assertFalse(TextUtils.isEmpty(stack));
         }
         Assert.fail("Time Consumed: " + (SystemClock.uptimeMillis() - bgnMillis));
