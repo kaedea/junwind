@@ -3,6 +3,7 @@ package com.kaedea.junwind;
 import android.os.Process;
 import android.os.SystemClock;
 import android.text.TextUtils;
+import android.util.Log;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -19,6 +20,23 @@ public class BenchmarkTest extends AbsAndroidTest {
 
     public static final int COUNT = 1000;
 
+
+    /**
+     * 0.002ms
+     */
+    @Test
+    public void testLogging() {
+        long bgnMillis = SystemClock.uptimeMillis();
+        for (int i = 0; i < COUNT; i++) {
+            //noinspection ThrowableNotThrown
+            Log.i("BenchmarkTest", "logging");
+        }
+        Assert.fail("Time Consumed: " + (SystemClock.uptimeMillis() - bgnMillis)/(COUNT * 1f) + "ms avg");
+    }
+
+    /**
+     * 0.02ms
+     */
     @Test
     public void testGetThreadStackByThrowable() {
         long bgnMillis = SystemClock.uptimeMillis();
@@ -26,27 +44,36 @@ public class BenchmarkTest extends AbsAndroidTest {
             //noinspection ThrowableNotThrown
             StackTraceElement[] elements = new Throwable().getStackTrace();
         }
-        Assert.fail("Time Consumed: " + (SystemClock.uptimeMillis() - bgnMillis));
+        Assert.fail("Time Consumed: " + (SystemClock.uptimeMillis() - bgnMillis)/(COUNT * 1f) + "ms avg");
     }
 
+    /**
+     * 0.02ms
+     */
     @Test
     public void testGetThreadStackByThread() {
         long bgnMillis = SystemClock.uptimeMillis();
         for (int i = 0; i < COUNT; i++) {
             StackTraceElement[] elements = Thread.currentThread().getStackTrace();
         }
-        Assert.fail("Time Consumed: " + (SystemClock.uptimeMillis() - bgnMillis));
+        Assert.fail("Time Consumed: " + (SystemClock.uptimeMillis() - bgnMillis)/(COUNT * 1f) + "ms avg");
     }
 
+    /**
+     * 0.08ms
+     */
     @Test
     public void testGetAllThreadStackByThread() {
         long bgnMillis = SystemClock.uptimeMillis();
         for (int i = 0; i < COUNT; i++) {
             Map<Thread, StackTraceElement[]> allStackTraces = Thread.getAllStackTraces();
         }
-        Assert.fail("Time Consumed: " + (SystemClock.uptimeMillis() - bgnMillis));
+        Assert.fail("Time Consumed: " + (SystemClock.uptimeMillis() - bgnMillis)/(COUNT * 1f) + "ms avg");
     }
 
+    /**
+     * 0.02ms
+     */
     @Test
     public void testGetThreadStackByTidWithJUnwind() {
         final AtomicInteger tid = new AtomicInteger(0);
@@ -62,9 +89,13 @@ public class BenchmarkTest extends AbsAndroidTest {
             String stack = JUnwind.jUnwind(tid.get());
             Assert.assertFalse(TextUtils.isEmpty(stack));
         }
-        Assert.fail("Time Consumed: " + (SystemClock.uptimeMillis() - bgnMillis));
+        Assert.fail("Time Consumed: " + (SystemClock.uptimeMillis() - bgnMillis)/(COUNT * 1f) + "ms avg");
     }
 
+    /**
+     * CFI: 20ms
+     * FP: 0.004ms
+     */
     @Test
     public void getGetThreadStackByCFI() {
         XUnwind.init();
@@ -81,6 +112,6 @@ public class BenchmarkTest extends AbsAndroidTest {
             String stack = XUnwind.getLocalThread(tid.get());
             Assert.assertFalse(TextUtils.isEmpty(stack));
         }
-        Assert.fail("Time Consumed: " + (SystemClock.uptimeMillis() - bgnMillis));
+        Assert.fail("Time Consumed: " + (SystemClock.uptimeMillis() - bgnMillis)/(COUNT * 1f) + "ms avg");
     }
 }
